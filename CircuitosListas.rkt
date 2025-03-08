@@ -7,7 +7,7 @@
 #lang eopl
 
 #|
-(20 Pts) En un archivo llamado CircuitosListas.rkt, proponga
+(20 Pts) proponga
 una implementacion de la gram´tica basada en listas: Esta 
 implementacion deberia contener los respectivos constructores (circuit,
 gate list, gate, type, input list). gate id y gate ref son simbolos y
