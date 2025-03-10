@@ -16,3 +16,21 @@ los 4 ejemplos de este taller. Revise los ejemplos de
 sintaxis abstracta de la siguiente seccion que le podran 
 servir como guia.
 |#
+
+(define valid-type?
+  (lambda (type)
+    (or (eqv? type 'and)
+        (eqv? type 'or)
+        (eqv? type 'not)
+        (eqv? type 'xor)
+    )
+  )
+)
+
+(define-datatype type type?
+  (gate-type (tipo valid-type?))
+)
+
+(define-datatype gate_id gate_id?
+  (gate-id (id symbol?))
+)
