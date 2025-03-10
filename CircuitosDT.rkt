@@ -6,17 +6,6 @@
 
 #lang eopl
 
-#|
-(20 Pts) proponga una implementacion basada en datatypes 
-(hay varias formas como puede representar la gramatica, 
-en especial dependiendo del manejo que le de a las listas 
-gate list e input list). Incluya ejemplos donde
-se evidencie su utilizacion y la creacion de por lo menos 
-los 4 ejemplos de este taller. Revise los ejemplos de 
-sintaxis abstracta de la siguiente seccion que le podran 
-servir como guia.
-|#
-
 (define valid-type?
   (lambda (type)
     (or (eqv? type 'and)
@@ -27,10 +16,28 @@ servir como guia.
   )
 )
 
-(define-datatype type type?
-  (gate-type (tipo valid-type?))
+(define-datatype gate-type gate-type?
+  (type (tipo valid-type?))
 )
 
-(define-datatype gate_id gate_id?
-  (gate-id (id symbol?))
+(define-datatype gate-id gate-id?
+  (gate_id (id symbol?))
+)
+
+(define-datatype gate-ref gate-ref?
+  (gate_ref (id symbol?))
+)
+
+(define-datatype gate-list gate-list?
+  (empty_gate_list)
+  (gate_list (gate gte?) (gate-list gate-list?))
+)
+
+(define-datatype gte gte?
+  (gate (gate-id gate-id?) (tipo gate-type?) (input-list input-list?))
+)
+
+(define-datatype input-list input-list?
+  (empty-input-list)
+  (input_list (bool boolean?) (input-lst input-list?) (gate-ref gate-ref?) (inpt-lst input-list?))
 )
