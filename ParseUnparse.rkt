@@ -15,6 +15,7 @@ para la representacion basada en datatypes, construya
 una funcion UNPARSEBNF donde dado un arbol de 
 sintaxis abstracta de un circuito, entregue la 
 representacion concreta basada en listas.
+|#
 
 ;;---------------------------------
 ;;
