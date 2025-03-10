@@ -34,10 +34,14 @@
 )
 
 (define-datatype gte gte?
-  (gate (gate-id gate-id?) (tipo gate-type?) (input-list input-list?))
+  (gate (gate symbol?) (gate-id gate-id?) (tipo gate-type?) (input-list input-list?))
 )
 
 (define-datatype input-list input-list?
   (empty-input-list)
   (input_list (bool boolean?) (input-lst input-list?) (gate-ref gate-ref?) (inpt-lst input-list?))
+)
+
+(define-datatype crct crct?
+  (circuit (circuit symbol?) (gate-list gate-list?))
 )
