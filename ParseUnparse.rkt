@@ -49,3 +49,25 @@ representacion concreta basada en listas.
  '(circuit
        (gate-list
            (gate G1 (type not) (input-list #t)))))
+
+;; ------------------------------------------------------------------------------
+
+(define UNPARSEBNF
+  (lambda (expresion)
+    (cases circuit expresion
+      (primerElemento (name) name)
+      (segundoElementoGateList (name body) ;lambda crea recursivamente los gate_list
+        (list 'gate_list (list name)
+              (UNPARSEBNF body)))
+      (tercerElementoGate (rator rand)
+         (list (UNPARSEBNF rator) (UNPARSEBNF rand))))))
+
+;;Pruebas
+(UNPARSEBNF
+(PARSEBNF
+ '(circuit
+       (gate-list
+           (gate G1 (type not) (input-list #t)))))
+)
+
+
