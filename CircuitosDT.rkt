@@ -34,14 +34,26 @@
 )
 
 (define-datatype gte gte?
-  (gate (gate symbol?) (gate-id gate-id?) (tipo gate-type?) (input-list input-list?))
+  (gate (gate-id symbol?) (tipo gate-type?) (input-list input-list?))
 )
 
 (define-datatype input-list input-list?
   (empty-input-list)
-  (input_list (bool boolean?) (input-lst input-list?) (gate-ref gate-ref?) (inpt-lst input-list?))
+  (input_list_A (bool boolean?) (input-lst input-list?))
+  (input_list_B (gate-ref gate-ref?) (input-lst input-list?))
 )
 
 (define-datatype crct crct?
-  (circuit (circuit symbol?) (gate-list gate-list?))
+  (circuit (gate-list gate-list?))
 )
+
+#|
+(circuit
+   (gate_list
+    (gate 'G1 (type 'or) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
+    (gate_list
+      (gate 'G2 (type 'and) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
+       (gate_list (gate 'G3 (type 'not) (input_list_B (gate_ref 'G2) (empty-input-list)))
+         (gate_list (gate 'G4 (type 'and) (input_list_B (gate_ref 'G1) (input_list_B (gate_ref 'G3) (empty-input-list)))) (empty_gate_list))))))
+   
+|#
