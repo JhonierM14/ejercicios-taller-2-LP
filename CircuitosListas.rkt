@@ -104,4 +104,13 @@ taller.
 (define circuit2 (circuit (gate-list gate2 gate1)))
 (define circuit3 (circuit (gate-list gate3 gate4)))
 
+'(circuit 
+  (gate-list
+      (gate 'G1 (type 'or) (input-list A B)) 
+      (gate 'G2 (type 'and) (input-list A B)) 
+      (gate 'G3 (type 'not) (input-list G2)) 
+      (gate 'G4 (type 'and) (input-list G1 G3))
+  )
+)
+
 
