@@ -26,12 +26,12 @@ representacion concreta basada en listas.
 ;; ################################################
 
 ;; datatype de circuito
-(define-datatype circuit circuit?
-  (a-circuit (gate_list (list-of gate?)))
+(define-datatype circuito circuito?
+  (a-circuit (gate_list (list-of gates?)))
   )
 
 ;;datatype de gate
-(define-datatype gate gate?
+(define-datatype gates gates?
   (a-gate (id symbol?) (type gate-type?) (inputs (list-of input?))))
 
 ;;datatype de type
@@ -98,11 +98,12 @@ representacion concreta basada en listas.
       (ref-input input)))
 
 ;; --------------------- Ejemplos ---------------------
+; debe retornar el arbol de sintaxis abstracta
 
 (PARSEBNF
  '(circuit
        (gate_list
-           (gate G1 (type not) (input-list #t)))))
+           (gate G1 (type not) (input_list #t)))))
 
 (PARSEBNF
  '(circuit
@@ -115,29 +116,84 @@ representacion concreta basada en listas.
     (gate G1 (type and) (input_list A B )))))
 
 (PARSEBNF '(circuit (gate_list
-                     (gate G1 (type or) (input-list A B))
-                     (gate G2 (type and) (input-list A B))
-                     (gate G3 (type not) (input-list G2))
-                     (gate G4 (type and) (input-list G1 G3)))))
+                     (gate G1 (type or) (input_list A B))
+                     (gate G2 (type and) (input_list A B))
+                     (gate G3 (type not) (input_list G2))
+                     (gate G4 (type and) (input_list G1 G3)))))
 
-;; ------------------------------------------------------------------------------
 
-(define UNPARSEBNF
-  (lambda (expresion)
-    (cases circuit expresion
-      (primerElemento (name) name)
-      (segundoElementoGateList (name body) ;lambda crea recursivamente los gate_list
-        (list 'gate_list (list name)
-              (UNPARSEBNF body)))
-      (tercerElementoGate (rator rand)
-         (list (UNPARSEBNF rator) (UNPARSEBNF rand))))))
+;; ################################################
+;;
+;;        REPPRESENTACION BASADA EN DATATYPES
+;;
+;; ################################################
 
-;;Pruebas
-(UNPARSEBNF
-(PARSEBNF
+; LISTA CON ('CIRCUIT (LIST GATES-LIST))
+(define (UNPARSEBNF arbol)
+  (cases circuito arbol
+      (a-circuit (gate_list)
+                 (list 'circuit (cons 'gate_list (unparsebnf-gate-list gate_list))))))
+
+; CREA LA LISTA DE GATE_LIST
+(define (unparsebnf-gate-list gate-list)
+  (if (null? gate-list)
+      '()
+      (cons (unparser-gate (car gate-list))
+            (unparsebnf-gate-list (cdr gate-list)))))
+
+; CREA LOS GATES
+(define (unparsebnf-gate-list-gate gate-list)
+  (if (null? gate-list)
+      '()
+      (cons (unparser-gate (car) (unparsebnf-gate-list-gate (cdr gate-list))))))
+
+; Procesa un gate individualmente
+(define (unparser-gate gate)
+  (cases gates gate
+    (a-gate (id type inputs)
+     (list 'gate id (unparse-type type) (cons 'input_list (unparse-inputs inputs))))))
+
+; Retorna el type y su estado
+(define (unparse-type type)
+  (cases gate-type type
+    (not-type () (list 'type 'not))
+    (and-type () (list 'type 'and))
+    (or-type () (list 'type 'or))
+    (xor-type () (list 'type 'xor))))
+
+; Crea la lista de inputs
+(define (unparse-inputs inputs)
+  (if (null? inputs) 
+      '()
+      (cons (unparse-input (car inputs)) (unparse-inputs (cdr inputs)))))
+
+; Formatea un input
+(define (unparse-input el-input)
+  (cases input el-input
+    (bool-input (val) val)
+    (ref-input (val) val)
+    ))
+  
+; ------------------ Ejemplos------------------------
+; deben retornar la lista de circuito
+
+(UNPARSEBNF (PARSEBNF
  '(circuit
-       (gate-list
-           (gate G1 (type not) (input-list #t)))))
-)
+       (gate_list
+           (gate G1 (type not) (input-list #t))))))
 
+(UNPARSEBNF (PARSEBNF
+ '(circuit
+   (gate_list
+    (gate G1 (type not) (input_list A))))))
 
+(UNPARSEBNF (PARSEBNF
+ '(circuit
+   (gate_list
+    (gate G1 (type and) (input_list A B ))))))
+
+(UNPARSEBNF (PARSEBNF '(circuit (gate_list
+                     (gate G1 (type or) (input_list A B))
+                     (gate G2 (type and) (input_list A B))
+                     (gate G3 (type not) (input_list G2))
+                     (gate G4 (type and) (input_list G1 G3))))))
