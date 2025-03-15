@@ -17,18 +17,58 @@ sintaxis abstracta de la siguiente seccion que le podran
 servir como guia.
 |#
 
-(define valid-type?
-  (lambda (type)
-    (or (eqv? type 'and)
-        (eqv? type 'or)
-        (eqv? type 'not)
-        (eqv? type 'xor)
-    )
-  )
-)
+;; <circuito> ::=  (<gate_list>)
+                   ; circuit (gate-list)
+
+
+;; <gate_list> ::= <empty>
+                   ; empty_gate_list
+
+;;             ::= <gate> <gate_list>
+                   ; gate_list (gate gate-list)
+
+
+;; <gate> ::= (<gate_id> <type> <input_list>)
+              ; gate (gate-id tipo input-list)
+
+
+;; <gate_id> ::= <symbol>
+                 ; gate_id (id)
+
+
+;; <type> ::= and
+              ; type_and
+
+;;        ::= or
+              ; type_or
+
+;;        ::= not
+              ; type_not
+
+;;        ::= xor
+              ; type_xor
+
+          
+
+;; <input_list> ::= <empty>
+                    ; empty-input-list
+
+;;              ::= <bool> <input_list>
+                    ; input_list_A (bool input-lst)
+
+;;              ::= <gate_ref> <input_list>
+                    ; input_list_B (gate-ref input-lst)
+
+
+;; <gate_ref> ::= symbol
+                  ; gate_ref (id)
+
 
 (define-datatype gate-type gate-type?
-  (type (tipo valid-type?))
+  (type_and)
+  (type_or)
+  (type_not)
+  (type_xor)
 )
 
 (define-datatype gate-id gate-id?
@@ -63,31 +103,31 @@ servir como guia.
 #|
 (circuit
    (gate_list
-    (gate (gate_id 'G1) (type 'not) (input_list_A #t (empty-input-list)))
+    (gate (gate_id 'G1) (type_not) (input_list_A #t (empty-input-list)))
     (empty_gate_list)))
 |#
 
 #|
 (circuit
    (gate_list
-    (gate (gate_id 'G1) (type 'not) (input_list_B (gate_ref 'A) (empty-input-list)))
+    (gate (gate_id 'G1) (type_not) (input_list_B (gate_ref 'A) (empty-input-list)))
     (empty_gate_list)))
 |#
 
 #|
 (circuit
    (gate_list
-    (gate (gate_id 'G1) (type 'and) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
+    (gate (gate_id 'G1) (type_and) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
     (empty_gate_list)))
 |#
 
 #|
 (circuit
    (gate_list
-    (gate (gate_id 'G1) (type 'or) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
+    (gate (gate_id 'G1) (type_or) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
     (gate_list
-      (gate (gate_id 'G2) (type 'and) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
-       (gate_list (gate (gate_id 'G3) (type 'not) (input_list_B (gate_ref 'G2) (empty-input-list)))
-         (gate_list (gate (gate_id 'G4) (type 'and) (input_list_B (gate_ref 'G1) (input_list_B (gate_ref 'G3) (empty-input-list)))) (empty_gate_list))))))
+      (gate (gate_id 'G2) (type_and) (input_list_B (gate_ref 'A) (input_list_B (gate_ref 'B) (empty-input-list))))
+       (gate_list (gate (gate_id 'G3) (type_not) (input_list_B (gate_ref 'G2) (empty-input-list)))
+         (gate_list (gate (gate_id 'G4) (type_and) (input_list_B (gate_ref 'G1) (input_list_B (gate_ref 'G3) (empty-input-list)))) (empty_gate_list))))))
    
 |#
