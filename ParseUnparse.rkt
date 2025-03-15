@@ -25,16 +25,24 @@ representacion concreta basada en listas.
 ;;
 ;; ################################################
 
+;; <circuito> ::=  '(circuit <gate_list>)
+;; <gate_list> ::= empty | <gate> <gate_list>
+;; <gate> ::= '(gate <gate_id> <type> <input_list>)
+;; <gate_id> ::= symbol
+;; <type> ::= and | or | not | xor
+;; <input_list> ::= empty | <bool> <input_list> | <gate_ref> <input_list>
+;; <gate_ref> ::= symbol
+
 ;; datatype de circuito
 (define-datatype circuito circuito?
   (a-circuit (gate_list (list-of gates?)))
   )
 
-;;datatype de gate
+;; datatype de gate
 (define-datatype gates gates?
   (a-gate (id symbol?) (type gate-type?) (inputs (list-of input?))))
 
-;;datatype de type
+;; datatype de type
 (define-datatype gate-type gate-type?
   (not-type)
   (and-type)
