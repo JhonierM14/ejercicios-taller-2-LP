@@ -56,13 +56,25 @@ representacion concreta basada en listas.
 
 ;; --------------------- PARSEBNF ---------------------
 
-;; expr := representacion concreta del circuito
+;; expr -> representacion concreta del circuito
+
+;; PARSEBNF:
+;; Proposito:
+;; expr -> arbol del circuito : es una funcion
+;; que recibe una representacion en listas de un circuito
+;; logico y retorna un arbol de sintaxis abstracta
 
 (define (PARSEBNF expr)
   (cond
     [(and (list? expr) (= (length expr) 2) (eq? (car expr) 'circuit))
      (a-circuit (parse-gates (cadr expr)))]
     [else (eopl:error "NO SE INGRESO UNA LISTA VALIDA")]))
+
+;; parse-gates:
+;; Proposito:
+;; gates -> arbol de gates : es una funcion
+;; que recibe una representacion en listas de los gates de un circuito
+;; logico y retorna su arbol de sintaxis abstracta
 
 ;; Se verfica que una lista sea gate_list
 (define (parse-gates gates)
@@ -71,20 +83,36 @@ representacion concreta basada en listas.
      (parse-gate-list (cdr gates))]
     [else (eopl:error "NO SE INGRESO UNA LISTA VALIDA")]))
 
-;; Condicion de parada, y llamada a parse-gate para formaterar el gate
+;; parse-gate-list:
+;; Proposito:
+;; Es una funcion que recibe una lista de gates
+;; pertenecientes a un circuito logico y retorna
+;; su arbol de sintaxis abstracta
+
+;; Condicion de parada, llamada a parse-gate para formatear el gate
 (define (parse-gate-list gate-list)
   (cond
     [(null? gate-list) '()]
     [else (cons (parse-gate (car gate-list)) (parse-gate-list (cdr gate-list)))]))
 
-;; Se verifica que la lista sea un gate valido, y se establece la estructura
+;; parse-gate:
+;; Proposito:
+;; Es una funcion que verifica que la
+;; lista sea un gate valido, y se establece
+;; la estructura
+
 (define (parse-gate gate)
   (cond
     [(and (list? gate) (= (length gate) 4) (eq? (car gate) 'gate))
      (a-gate (cadr gate) (parse-type (caddr gate)) (parse-inputs (cadddr gate)))]
     [else (eopl:error "Formato de compuerta inválido")]))
 
-;; Retorna una lista formateada para el type
+;; parse-type:
+;; Proposito:
+;; Es una funcion que retorna la sintaxis abstracta
+;; formateada para el type para el
+;; arbol de sintaxis abstracta
+
 (define (parse-type type)
   (cond
     [(equal? type '(type not)) (not-type)]
@@ -93,13 +121,23 @@ representacion concreta basada en listas.
     [(equal? type '(type xor)) (xor-type)]
     [else (eopl:error "Tipo de compuerta inválido")]))
 
-;; Crea y retorna una lista de inputs formateados
+;; parse-inputs:
+;; Proposito:
+;; Crea y retorna la sintaxis abstracta de una
+;; lista de inputs formateados para el
+;; arbol de sintaxis abstracta
+
 (define (parse-inputs inputs)
   (if (null? (cdr inputs))
       '()
       (cons (parse-input (cadr inputs)) (parse-inputs (cons 'input-list (cddr inputs))))))
 
-;; Retorna la representacion de un input para el arbol de sintaxis abstracta
+;; parse-input:
+;; Proposito:
+;; Retorna la sintaxis abstracta
+;; de la representacion de un input para el
+;; arbol de sintaxis abstracta
+
 (define (parse-input input)
   (if (boolean? input)
       (bool-input input)
